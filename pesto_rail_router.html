@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft SMP Train Router</title>
+    <style>
+        body {
+            font-family: 'Minecraft', Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #588157;
+        }
+        h2 {
+            color: #60a558;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+        }
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #588157;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #588157;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #60a558;
+        }
+        #result {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .route-step {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 4px solid #60a558;
+        }
+        .hsr-step {
+            border-left: 4px solid #60a558;
+        }
+        .line-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .hsr-badge {
+            background-color: #094baf;
+            position: relative;
+        }
+        .hsr-badge::after {
+            content: "★";
+            font-size: 10px;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: gold;
+            color: black;
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+        .admin-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #ddd;
+        }
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .admin-controls button {
+            flex: 1;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            font-family: monospace;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .transfer-station {
+            font-weight: bold;
+            color: #60a558;
+        }
+        .station-count {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .total-time {
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+        .help-text {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+        .tab {
+            padding: 8px 15px;
+            cursor: pointer;
+            margin-right: 5px;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            background-color: #f5f5f5;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .form-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PESTO Train Router</h1>
+        
+        <div class="form-container">
+            <div class="input-group">
+                <label for="start-station">Start Station:</label>
+                <select id="start-station"></select>
+            </div>
+            <div class="input-group">
+                <label for="end-station">Destination Station:</label>
+                <select id="end-station"></select>
+            </div>
+            <div>
+                <button id="find-route">Find Route</button>
+            </div>
+        </div>
+        
+        <div id="result">
+            <p>Select your starting point and destination to find the best route.</p>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Network Configuration</h2>
+            <div class="tabs">
+                <div class="tab active" data-tab="help">Information</div>
+                <div class="tab" data-tab="config">Configuration</div>
+            </div>
+            
+            <div id="tab-help" class="tab-content">
+                <h3>How to Configure Your Train Network</h3>
+                
+                <h4>HSR LinesLSR (Local Service Rail)</h4>
+                <p>Regular train lines with sequential stations:</p>
+                <ul>
+                    <li>Define LSR lines with "type": "lsr"</li>
+                    <li>Each segment connects exactly two stations with a specific travel time</li>
+                    <li>Trains must travel through all intermediate stations</li>
+                </ul>
+                
+                <h4>HSR (High Speed Rail)</h4>
+                <p>Express lines with direct connections between multiple terminuses:</p>
+                <ul>
+                    <li>Define HSR lines with "type": "hsr"</li>
+                    <li>List all terminuses in the "terminuses" array</li>
+                    <li>Define direct connections between terminuses in the "connections" array</li>
+                    <li>Each connection has "from", "to", and "time" properties</li>
+                    <li>HSR allows direct travel without passing through other terminuses</li>
+                </ul>
+                
+                <h4>Example Configuration</h4>
+                <p>The system comes with example data showing both LSR and HSR networks. Click the "Configuration" tab to see and edit it.</p>
+                
+                <!----><button id="show-config" class="tab" style="display: block; margin-top: 15px;">Switch to Configuration</button>
+            </div>
+            
+            <div id="tab-config" class="tab-content" style="display: none;">
+                <div class="admin-controls">
+                    <button id="save-data">Save Network Data</button>
+                    <button id="reset-default">Reset to Example</button>
+                </div>
+                <textarea id="network-data"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default example network data with both LSR and HSR
+        const defaultNetworkData = {
+          "lines": [
+            {
+              "id": "lsr1",
+              "name": "LSR 1",
+              "color": "#ed1c2a",
+              "type": "lsr",
+              "segments": [
+                {
+                  "from": "- Queen's Cross - London",
+                  "to": "Brighton",
+                  "time": 40
+                },
+                {
+                  "from": "Brighton",
+                  "to": "Southampton",
+                  "time": 15
+                },
+                {
+                  "from": "Southampton",
+                  "to": "Plymouth - Cornwall",
+                  "time": 70
+                }
+              ]
+            },
+
+
+
+            {
+              "id": "lsr2",
+              "name": "LSR 2",
+              "color": "#ffffff",
+              "type": "lsr",
+              "segments": [
+                {
+                  "from": "n/a",
+                  "to": "n/a2",
+                  "time": 3600
+                },
+                {
+                  "from": "n/a2",
+                  "to": "n/a3",
+                  "time": 3600
+                },
+                {
+                  "from": "n/a3",
+                  "to": "n/a4",
+                  "time": 3600
+                },
+                {
+                  "from": "n/a4",
+                  "to": "n/a5",
+                  "time": 3600
+                }
+              ]
+            },
+
+
+
+            {
+              "id": "lsr3",
+              "name": "LSR 3",
+              "color": "#f59fb3",
+              "type": "lsr",
+              "segments": [
+                {
+                  "from": "- Charleville-Mézières",
+                  "to": "PlaceholderOne",
+                  "time": 3600
+                },
+                {
+                  "from": "PlaceholderOne",
+                  "to": "PlaceholderTwo",
+                  "time": 3600
+                },
+                {
+                  "from": "PlaceholderTwo",
+                  "to": "Antalya",
+                  "time": 3600
+                },
+                {
+                  "from": "Antalya",
+                  "to": "Rasht",
+                  "time": 3600
+                },
+                {
+                  "from": "Rasht",
+                  "to": "Baïkonur - End Portal",
+                  "time": 3600
+                }
+              ]
+            },
+
+
+            {
+              "id": "lsr4",
+              "name": "LSR 4",
+              "color": "#080e5c",
+              "type": "lsr",
+              "segments": [
+                {
+                  "from": "Gdańsk",
+                  "to": "- Warsaw Central",
+                  "time": 65
+                }
+              ]
+            },
+
+
+
+            {
+              "id": "lsr5",
+              "name": "LSR 5",
+              "color": "#f78f4b",
+              "type": "lsr",
+              "segments": [
+                {
+                  "from": "- Warsaw Central",
+                  "to": "Katowice",
+                  "time": 30
+                },
+                {
+                  "from": "Katowice",
+                  "to": "Kosice",
+                  "time": 40
+                },
+                {
+                  "from": "Kosice",
+                  "to": "Belgrade",
+                  "time": 65
+                },
+                {
+                  "from": "Belgrade",
+                  "to": "Thessaloniki",
+                  "time": 75
+                }
+              ]
+            },
+
+
+
+            {
+              "id": "lsr6",
+              "name": "LSR 6",
+              "color": "#ed1c2a",
+              "type": "lsr",
+              "segments": [
+                {
+                  "from": "Kiel",
+                  "to": "Szczecin",
+                  "time": 70
+                },
+                {
+                  "from": "Szczecin",
+                  "to": "Gdańsk",
+                  "time": 65
+                },
+                {
+                  "from": "Gdańsk",
+                  "to": "Królewiec",
+                  "time": 3600
+                },
+                {
+                  "from": "Królewiec",
+                  "to": "Kaunas",
+                  "time": 3600
+                },
+                {
+                  "from": "Kaunas",
+                  "to": "Riga",
+                  "time": 3600
+                }
+              ]
+            },
+
+
+
+            {
+              "id": "lsr7",
+              "name": "LSR 7",
+              "color": "#ffcd02",
+              "type": "lsr",
+              "segments": [
+                {
+                  "from": "- Queen's Cross - London",
+                  "to": "Birmingham",
+                  "time": 45
+                },
+                {
+                  "from": "Birmingham",
+                  "to": "Liverpool",
+                  "time": 30
+                },
+                {
+                  "from": "Liverpool",
+                  "to": "Isle of Man",
+                  "time": 40
+                }
+              ]
+            },
+
+
+
+            {
+            "id": "lsr8",
+            "name": "LSR 8",
+            "color": "#77c696",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "Newcastle",
+                "to": "Birmingham",
+                "time": 30
+                },
+                {
+                "from": "Birmingham",
+                "to": "Southampton",
+                "time": 15
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "lsr9",
+            "name": "LSR 9",
+            "color": "#87d3df",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "Southampton",
+                "to": "- Rennes",
+                "time": 50
+                },
+                {
+                "from": "- Rennes",
+                "to": "La Rochelle",
+                "time": 3600
+                },
+                {
+                "from": "La Rochelle",
+                "to": "Bordeaux",
+                "time": 3600
+                },
+                {
+                "from": "Bordeaux",
+                "to": "Pyrénées",
+                "time": 3600
+                },
+                {
+                "from": "Pyrénées",
+                "to": "- Mequinenza",
+                "time": 3600
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "lsr10",
+            "name": "LSR 10",
+            "color": "#662c91",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "Brest (FR)",
+                "to": "- Rennes",
+                "time": 3600
+                },
+                {
+                "from": "- Rennes",
+                "to": "Étampes",
+                "time": 3600
+                },
+                {
+                "from": "Étampes",
+                "to": "Reims",
+                "time": 3600
+                },
+                {
+                "from": "Reims",
+                "to": "- Charleville-Mézières",
+                "time": 3600
+                },
+                {
+                "from": "- Charleville-Mézières",
+                "to": "Düsseldorf",
+                "time": 3600
+                },
+                {
+                "from": "Düsseldorf",
+                "to": "Kiel",
+                "time": 3600
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "lsr11",
+            "name": "LSR 11",
+            "color": "#4c90cd",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "- Warsaw Central",
+                "to": "Brest (PL)",
+                "time": 40
+                },
+                {
+                "from": "Brest (PL)",
+                "to": "Kaunas",
+                "time": 50
+                },
+                {
+                "from": "Kaunas",
+                "to": "Riga",
+                "time": 30
+                },
+                {
+                "from": "Riga",
+                "to": "Tallinn",
+                "time": 30
+                },
+                {
+                "from": "Tallinn",
+                "to": "Helsinki",
+                "time": 20
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "lsr12",
+            "name": "LSR 12",
+            "color": "#008c5a",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "Gdańsk",
+                "to": "Bydgoszcz",
+                "time": 3600
+                },
+                {
+                "from": "Bydgoszcz",
+                "to": "Plock",
+                "time": 3600
+                },
+                {
+                "from": "Plock",
+                "to": "- Warsaw Central",
+                "time": 3600
+                },
+                {
+                "from": "- Warsaw Central",
+                "to": "Lublin",
+                "time": 3600
+                },
+                {
+                "from": "Lublin",
+                "to": "Katowice",
+                "time": 3600
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "lsr13",
+            "name": "LSR 13",
+            "color": "#e0b03b",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "- Warsaw Central",
+                "to": "Carpathia",
+                "time": 3600
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "lsr14",
+            "name": "LSR 14",
+            "color": "#ffcd02",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "- Warsaw Central",
+                "to": "Brest (PL)",
+                "time": 40
+                },
+                {
+                "from": "Brest (PL)",
+                "to": "Kyiv",
+                "time": 105
+                },
+                {
+                "from": "Kyiv",
+                "to": "Odessa",
+                "time": 50
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "lsr15",
+            "name": "LSR 15",
+            "color": "#b80b4b",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "Thessaloniki",
+                "to": "Tirana",
+                "time": 45
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "lsr16",
+            "name": "LSR 16",
+            "color": "#c5a3cd",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "Tirana",
+                "to": "Bari",
+                "time": 50
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "lsr30",
+            "name": "LSR 30",
+            "color": "#b80b4b",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "Rasht",
+                "to": "Altaïr",
+                "time": 3600
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "lsr32",
+            "name": "LSR 32",
+            "color": "#c5a3cd",
+            "type": "lsr",
+            "segments": [
+                {
+                "from": "Antalya",
+                "to": "Istanbul",
+                "time": 70
+                },
+                {
+                "from": "Istanbul",
+                "to": "Slime Farm",
+                "time": 95
+                },
+                {
+                "from": "Slime Farm",
+                "to": "Odessa",
+                "time": 30
+                }
+            ]
+            },
+
+
+
+
+            {
+            "id": "express1",
+            "name": "Blue HSR",
+            "color": "#4c90cd",
+            "type": "hsr",
+            "terminuses": [
+                "- Amsterdam Centraal",
+                "- Charleville-Mézières",
+                "- Queen's Cross - London",
+                "- Rennes"
+            ],
+            "connections": [
+                {
+                "from": "- Amsterdam Centraal",
+                "to": "- Charleville-Mézières",
+                "time": 40
+                },
+                {
+                "from": "- Amsterdam Centraal",
+                "to": "- Queen's Cross - London",
+                "time": 65
+                },
+                {
+                "from": "- Amsterdam Centraal",
+                "to": "- Rennes",
+                "time": 85
+                },
+                {
+                "from": "- Charleville-Mézières",
+                "to": "- Queen's Cross - London",
+                "time": 65
+                },
+                {
+                "from": "- Charleville-Mézières",
+                "to": "- Rennes",
+                "time": 85
+                },
+                {
+                "from": "- Queen's Cross - London",
+                "to": "- Rennes",
+                "time": 60
+                }
+            ]
+            },
+
+
+
+            {
+            "id": "express2",
+            "name": "Green HSR",
+            "color": "#30a442",
+            "type": "hsr",
+            "terminuses": [
+                "- Amsterdam Centraal",
+                "- Warsaw Central"
+            ],
+            "connections": [
+                {
+                "from": "- Amsterdam Centraal",
+                "to": "- Warsaw Central",
+                "time": 165
+                }
+            ]
+            }
+        ]
+        };
+
+        let networkData = JSON.parse(JSON.stringify(defaultNetworkData));
+        
+        // DOM elements
+        const startSelect = document.getElementById('start-station');
+        const endSelect = document.getElementById('end-station');
+        const findRouteBtn = document.getElementById('find-route');
+        const resultDiv = document.getElementById('result');
+        const networkDataTextarea = document.getElementById('network-data');
+        const saveDataBtn = document.getElementById('save-data');
+        const resetDefaultBtn = document.getElementById('reset-default');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const showConfigBtn = document.getElementById('show-config');
+
+        // Initialize the app
+        function init() {
+            loadNetworkData();
+            populateStations();
+            bindEvents();
+        }
+
+        // Load network data from localStorage or use default
+        function loadNetworkData() {
+            const savedData = localStorage.getItem('minecraftTrainNetwork');
+            if (savedData) {
+                try {
+                    networkData = JSON.parse(savedData);
+                } catch (e) {
+                    console.error("Error parsing saved network data:", e);
+                    networkData = JSON.parse(JSON.stringify(defaultNetworkData));
+                }
+            }
+            networkDataTextarea.value = JSON.stringify(networkData, null, 2);
+        }
+
+        // Get all unique stations from all lines (both LSR and HSR)
+        function getAllStations() {
+            const stations = new Set();
+            
+            networkData.lines.forEach(line => {
+                if (line.type === "lsr") {
+                    line.segments.forEach(segment => {
+                        stations.add(segment.from);
+                        stations.add(segment.to);
+                    });
+                } else if (line.type === "hsr") {
+                    line.terminuses.forEach(terminus => {
+                        stations.add(terminus);
+                    });
+                }
+            });
+            
+            return Array.from(stations).sort();
+        }
+
+        // Populate station dropdowns
+        function populateStations() {
+            const stations = getAllStations();
+            
+            startSelect.innerHTML = '';
+            endSelect.innerHTML = '';
+            
+            stations.forEach(station => {
+                const startOption = document.createElement('option');
+                startOption.value = station;
+                startOption.textContent = station;
+                
+                const endOption = document.createElement('option');
+                endOption.value = station;
+                endOption.textContent = station;
+                
+                startSelect.appendChild(startOption);
+                endSelect.appendChild(endOption);
+            });
+        }
+
+        // Bind event listeners
+        function bindEvents() {
+            findRouteBtn.addEventListener('click', findAndDisplayRoute);
+            saveDataBtn.addEventListener('click', saveNetworkData);
+            resetDefaultBtn.addEventListener('click', resetToDefaultData);
+            showConfigBtn.addEventListener('click', () => switchTab('config'));
+            
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchTab(tab.getAttribute('data-tab'));
+                });
+            });
+        }
+
+        // Switch between tabs
+        function switchTab(tabId) {
+            tabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            tabContents.forEach(content => {
+                if (content.id === `tab-${tabId}`) {
+                    content.style.display = 'block';
+                } else {
+                    content.style.display = 'none';
+                }
+            });
+        }
+
+        // Save network data to localStorage
+        function saveNetworkData() {
+            try {
+                const newData = JSON.parse(networkDataTextarea.value);
+                networkData = newData;
+                localStorage.setItem('minecraftTrainNetwork', JSON.stringify(networkData));
+                populateStations();
+                alert("Network data saved successfully!");
+            } catch (e) {
+                alert("Error: Invalid JSON format. Please check your data.");
+                console.error(e);
+            }
+        }
+
+        // Reset to default network data
+        function resetToDefaultData() {
+            if (confirm("Are you sure you want to reset to the example network data? This will erase your current configuration.")) {
+                networkData = JSON.parse(JSON.stringify(defaultNetworkData));
+                networkDataTextarea.value = JSON.stringify(networkData, null, 2);
+                localStorage.setItem('minecraftTrainNetwork', JSON.stringify(networkData));
+                populateStations();
+                alert("Reset to example network data.");
+            }
+        }
+
+        // Build a graph representation of the network (including both LSR and HSR)
+        function buildGraph() {
+            const graph = {};
+            
+            // Initialize graph with all stations
+            getAllStations().forEach(station => {
+                graph[station] = {};
+            });
+            
+            // Add LSR connections
+            networkData.lines.forEach(line => {
+                if (line.type === "lsr") {
+                    line.segments.forEach(segment => {
+                        // Add bidirectional connections with the time as weight
+                        graph[segment.from][segment.to] = {
+                            time: segment.time,
+                            line: line.id,
+                            type: "lsr"
+                        };
+                        
+                        graph[segment.to][segment.from] = {
+                            time: segment.time,
+                            line: line.id,
+                            type: "lsr"
+                        };
+                    });
+                } else if (line.type === "hsr") {
+                    // Add HSR direct connections
+                    line.connections.forEach(connection => {
+                        graph[connection.from][connection.to] = {
+                            time: connection.time,
+                            line: line.id,
+                            type: "hsr"
+                        };
+                        
+                        graph[connection.to][connection.from] = {
+                            time: connection.time,
+                            line: line.id,
+                            type: "hsr"
+                        };
+                    });
+                }
+            });
+            
+            return graph;
+        }
+
+        // Find and display the optimal route
+        function findAndDisplayRoute() {
+            const startStation = startSelect.value;
+            const endStation = endSelect.value;
+            
+            if (startStation === endStation) {
+                resultDiv.innerHTML = "<p>Start and destination stations are the same.</p>";
+                return;
+            }
+            
+            const route = findRoute(startStation, endStation);
+            displayRoute(route);
+        }
+
+        // Find the optimal route between two stations
+        function findRoute(start, end) {
+            // Build a graph representation of the network
+            const graph = buildGraph();
+            
+            // Use Dijkstra's algorithm to find the shortest path
+            const { distances, previous } = dijkstra(graph, start);
+            
+            // If there's no path to the destination
+            if (distances[end] === Infinity) {
+                return null;
+            }
+            
+            // Reconstruct the path
+            const path = [];
+            let current = end;
+            
+            while (current !== start) {
+                path.unshift(current);
+                current = previous[current];
+            }
+            path.unshift(start);
+            
+            // Convert the path to a route with train lines
+            return convertPathToRoute(path, graph);
+        }
+
+        // Dijkstra's algorithm implementation
+        function dijkstra(graph, startNode) {
+            const distances = {};
+            const previous = {};
+            const nodes = new Set();
+            
+            // Initialize distances and add all nodes to the unvisited set
+            Object.keys(graph).forEach(node => {
+                distances[node] = node === startNode ? 0 : Infinity;
+                previous[node] = null;
+                nodes.add(node);
+            });
+            
+            while (nodes.size > 0) {
+                // Find the node with the minimum distance
+                let minDistance = Infinity;
+                let minNode = null;
+                
+                nodes.forEach(node => {
+                    if (distances[node] < minDistance) {
+                        minDistance = distances[node];
+                        minNode = node;
+                    }
+                });
+                
+                // If the minimum distance is infinity, there are no more reachable nodes
+                if (minDistance === Infinity) break;
+                
+                // Remove the node from the unvisited set
+                nodes.delete(minNode);
+                
+                // Update distances to adjacent nodes
+                Object.keys(graph[minNode]).forEach(neighbor => {
+                    const edge = graph[minNode][neighbor];
+                    const alt = distances[minNode] + edge.time;
+                    
+                    if (alt < distances[neighbor]) {
+                        distances[neighbor] = alt;
+                        previous[neighbor] = minNode;
+                    }
+                });
+            }
+            
+            return { distances, previous };
+        }
+
+        // Convert a path of stations to a route with train lines
+        function convertPathToRoute(path, graph) {
+            const route = [];
+            
+            for (let i = 0; i < path.length - 1; i++) {
+                const from = path[i];
+                const to = path[i + 1];
+                const connection = graph[from][to];
+                
+                // Find the line that this segment belongs to
+                const line = networkData.lines.find(l => l.id === connection.line);
+                
+                // If we're continuing on the same line and it's the same type (LSR or HSR)
+                if (route.length > 0 && 
+                    route[route.length - 1].line === line.id && 
+                    route[route.length - 1].type === connection.type) {
+                    
+                    const lastSegment = route[route.length - 1];
+                    lastSegment.to = to;
+                    lastSegment.stations.push(to);
+                    
+                    if (connection.type === "lsr") {
+                        lastSegment.time += connection.time;
+                        lastSegment.segments.push({ from, to, time: connection.time });
+                    }
+                } else {
+                    // Starting a new line segment
+                    if (connection.type === "lsr") {
+                        route.push({
+                            from,
+                            to,
+                            line: line.id,
+                            lineName: line.name,
+                            lineColor: line.color,
+                            type: "lsr",
+                            stations: [from, to],
+                            time: connection.time,
+                            segments: [{ from, to, time: connection.time }]
+                        });
+                    } else { // HSR
+                        route.push({
+                            from,
+                            to,
+                            line: line.id,
+                            lineName: line.name,
+                            lineColor: line.color,
+                            type: "hsr",
+                            stations: [from, to],
+                            time: connection.time
+                        });
+                    }
+                }
+            }
+            
+            return route;
+        }
+
+        // Format time (seconds to minutes and seconds)
+        function formatTime(seconds) {
+            if (seconds < 60) {
+                return `${seconds} seconds`;
+            }
+            
+            const min = Math.floor(seconds / 60);
+            const sec = seconds % 60;
+            
+            if (sec === 0) {
+                return `${min} ${min === 1 ? 'minute' : 'minutes'}`;
+            }
+            
+            return `${min} ${min === 1 ? 'minute' : 'minutes'} ${sec} ${sec === 1 ? 'second' : 'seconds'}`;
+        }
+
+        // Display the route
+        function displayRoute(route) {
+            if (!route) {
+                resultDiv.innerHTML = "<p>No route found between these stations.</p>";
+                return;
+            }
+            
+            let totalTime = 0;
+            let html = "<h2>Your Route</h2>";
+            
+            route.forEach((segment, index) => {
+                totalTime += segment.time;
+                
+                const isHSR = segment.type === "hsr";
+                const hsrClass = isHSR ? "hsr-step" : "";
+                const hsrBadgeClass = isHSR ? "hsr-badge" : "";
+                
+                html += `<div class="route-step ${hsrClass}">`;
+                html += `<div><span class="line-badge ${hsrBadgeClass}" style="background-color: ${segment.lineColor}">${segment.lineName}</span>`;
+                
+                if (index === 0) {
+                    html += `From <strong>${segment.from}</strong>`;
+                } else {
+                    html += `Continue from <strong class="transfer-station">${segment.from}</strong>`;
+                }
+                
+                if (index === route.length - 1) {
+                    html += ` to <strong>${segment.to}</strong>`;
+                } else {
+                    html += ` to <strong class="transfer-station">${segment.to}</strong>`;
+                }
+                
+                html += `</div>`;
+                
+                // For LSR lines with intermediate stations
+                if (segment.type === "lsr" && segment.stations.length > 2) {
+                    html += `<div class="station-count">Pass through: ${segment.stations.slice(1, -1).join(", ")}</div>`;
+                }
+                
+                // For HSR lines
+                if (segment.type === "hsr") {
+                    html += `<div class="station-count"><strong>Express direct connection</strong></div>`;
+                }
+                
+                // Show detailed segment times for LSR
+                if (segment.type === "lsr" && segment.segments && segment.segments.length > 1) {
+                    html += `<div class="station-count">`;
+                    segment.segments.forEach(seg => {
+                        html += `${seg.from} to ${seg.to}: ${formatTime(seg.time)}<br>`;
+                    });
+                    html += `</div>`;
+                }
+                
+                html += `<div class="station-count">Total: ${formatTime(segment.time)}`;
+                
+                if (segment.type === "lsr") {
+                    html += ` (${segment.stations.length - 1} stops)`;
+                }
+                
+                html += `</div>`;
+                html += `</div>`;
+                
+                if (index < route.length - 1) {
+                    html += `<div class="route-step" style="padding-left: 20px">Transfer at <strong class="transfer-station">${segment.to}</strong> to ${route[index + 1].lineName}</div>`;
+                }
+            });
+            
+            html += `<div class="total-time">Total journey time: ${formatTime(totalTime)}</div>`;
+            
+            resultDiv.innerHTML = html;
+        }
+
+        // Initialize the app on page load
+        init();
+    </script>
+</body>
+</html>
