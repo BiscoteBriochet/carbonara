@@ -192,16 +192,23 @@
         </div>
         
         <div class="admin-section">
-            <h2>Network Configuration</h2>
+            <h2>Other Info</h2>
             <div class="tabs">
                 <div class="tab active" data-tab="help">Information</div>
                 <div class="tab" data-tab="config">Configuration</div>
             </div>
             
             <div id="tab-help" class="tab-content">
-                <h3>How to Configure Your Train Network</h3>
-                
-                <h4>HSR LinesLSR (Local Service Rail)</h4>
+                <h3>How to get arround ?</h3>
+                <ul>
+                    <li>HSR</li>
+                    <li>LSR</li>
+                    <li>Other stuff</li>
+
+
+                    
+                </ul>
+                <h4>HSR Lines</h4>
                 <p>Regular train lines with sequential stations:</p>
                 <ul>
                     <li>Define LSR lines with "type": "lsr"</li>
@@ -209,7 +216,7 @@
                     <li>Trains must travel through all intermediate stations</li>
                 </ul>
                 
-                <h4>HSR (High Speed Rail)</h4>
+                <h4>LSR Lines</h4>
                 <p>Express lines with direct connections between multiple terminuses:</p>
                 <ul>
                     <li>Define HSR lines with "type": "hsr"</li>
@@ -228,7 +235,7 @@
             <div id="tab-config" class="tab-content" style="display: none;">
                 <div class="admin-controls">
                     <button id="save-data">Save Network Data</button>
-                    <button id="reset-default">Reset to Example</button>
+                    <button id="reset-default">Reset to Current Map</button>
                 </div>
                 <textarea id="network-data"></textarea>
             </div>
