@@ -199,34 +199,30 @@
             </div>
             
             <div id="tab-help" class="tab-content">
+                
+                <h3>Map of the Network</h3>
                 <h3>How to get arround ?</h3>
-                <ul>
-                    <li>HSR</li>
-                    <li>LSR</li>
-                    <li>Other stuff</li>
-
-
-                    
-                </ul>
+                
                 <h4>HSR Lines</h4>
-                <p>Regular train lines with sequential stations:</p>
+                <p>HSR goes at 20bps (more in diagonal), there will be 7 of them :</p>
                 <ul>
-                    <li>Define LSR lines with "type": "lsr"</li>
-                    <li>Each segment connects exactly two stations with a specific travel time</li>
-                    <li>Trains must travel through all intermediate stations</li>
+                    <li>Yellow HSR aka PESTO HSR : a line that wraps arround the world, and connects to every other HSR</li>
+                    <li>Blue HSR : a line that serves mainly Western Europe</li>
+                    <li>Green HSR : a line that serves mainly Eastern Europe</li>
+                    <li>Purple HSR : a line that serves mainly Americas</li>
+                    <li>Pink HSR : a line that serves mainly Middle-East</li>
+                    <li>Red HSR : a line that serves mainly Asia and Oceania</li>
+                    <li>Orange HSR : a line that serves mainly Africa</li>
                 </ul>
                 
                 <h4>LSR Lines</h4>
-                <p>Express lines with direct connections between multiple terminuses:</p>
+                <p>LSR goes up to 16bps, the list of lines is avaible here (pdf, last update xx/yy/zzzz)</p>
+
+                <h4>Other Methods of Transportation</h4>
                 <ul>
-                    <li>Define HSR lines with "type": "hsr"</li>
-                    <li>List all terminuses in the "terminuses" array</li>
-                    <li>Define direct connections between terminuses in the "connections" array</li>
-                    <li>Each connection has "from", "to", and "time" properties</li>
-                    <li>HSR allows direct travel without passing through other terminuses</li>
+                    <li>A.L.F.R.E.D.O. : Accelerated Lazy Flight Ridiculously Energetic Displacement Operation (refer to https://discord.com/channels/1168009387122630669/1168009428671406200/1335308672640749690)</li>
+                    <li>End Portals : You can go in the End and get back to your spawnpoint. If you're far from Charleville-Mézières you can just break your bed, go in the End (or die) and tada you're at CVM</li>      
                 </ul>
-                
-                <h4>Example Configuration</h4>
                 <p>The system comes with example data showing both LSR and HSR networks. Click the "Configuration" tab to see and edit it.</p>
                 
                 <!----><button id="show-config" class="tab" style="display: block; margin-top: 15px;">Switch to Configuration</button>
