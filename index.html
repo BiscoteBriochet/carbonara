@@ -174,7 +174,7 @@
         <h1>CARBONARA</h1>
         <h2 style="text-align: center;">A PESTO Train Router</h2>
         <h5 style="text-align: center;">Comprehensive And Rapid Browser for Organized Navigation And Route Assistance</h5>
-        
+
         <div class="form-container">
             <div class="input-group">
                 <label for="start-station">Start Station:</label>
@@ -188,28 +188,28 @@
                 <button id="find-route">Find Route</button>
             </div>
         </div>
-        
+
         <div id="result">
             <p>Select your starting point and destination to find the best route.</p>
         </div>
-        <p>You fell that this path is outdated ? Go to "Configuration" then "Reset to Current Map" to update the network data.</p>
+        <p>Outdated path? Go to "Configuration" then "Reset to Current Map" to update the network data.</p>
         <div class="admin-section">
-            <h2>Informations</h2>
+            <h2>Information</h2>
             <div class="tabs">
                 <div class="tab active" data-tab="help">Information</div>
                 <div class="tab" data-tab="config">Configuration</div>
             </div>
-            
+
             <div id="tab-help" class="tab-content">
-                
+
                 <h3>Map of the Network</h3>
                 <p><a href="./map_16_03_2025.pdf" title="map_16_03_2025">Here</a> is a map of the HSR-LSR Network (pdf, last update: 16/03/2025)</p>
-                <h3>How to get arround ?</h3>
-                
+                <h3>How to get around?</h3>
+
                 <h4>HSR Lines</h4>
                 <p>HSR goes at 20bps, there will be 7 of them:</p>
                 <ul>
-                    <li>Yellow HSR aka PESTO HSR : a line that wraps arround the world, and connects to every other HSR</li>
+                    <li>Yellow HSR aka PESTO HSR: a line that wraps around the world, and connects to every other HSR</li>
                     <li>Blue HSR: a line that serves mainly Western Europe</li>
                     <li>Green HSR: a line that serves mainly Eastern Europe</li>
                     <li>Purple HSR: a line that serves mainly Americas</li>
@@ -217,27 +217,27 @@
                     <li>Red HSR: a line that serves mainly Asia and Oceania</li>
                     <li>Orange HSR: a line that serves mainly Africa</li>
                 </ul>
-                
+
                 <h4>LSR Lines</h4>
-                <p>LSR goes up to 16bps, the list of lines is avaible <a href="./lsr_16_03_2025.pdf" title="lsr_16_03_2025">here</a> (pdf, last update: 16/03/2025)</p>
+                <p>LSR goes up to 16bps, the list of lines is available <a href="./lsr_16_03_2025.pdf" title="lsr_16_03_2025">here</a> (pdf, last update: 16/03/2025)</p>
 
                 <h4>Other Methods of Transportation</h4>
                 <ul>
-                    <li>ALFREDO: Accelerated Lazy Flight Ridiculously Energetic Displacement Operation (refer to <a href="https://discord.com/channels/1168009387122630669/1168009428671406200/1335308672640749690">this</a>)</li>
-                    <li>End Portals: You can go in the End and get back to your spawnpoint. If you're far from Charleville-Mézières you can just break your bed, go in the End (or die) and tada you're at CVM</li>      
+                    <li>ALFREDO: Accelerated Lazy Flight, Ridiculously Energetic Displacement Operation (refer to <a href="https://discord.com/channels/1168009387122630669/1168009428671406200/1335308672640749690">this</a>)</li>
+                    <li>End Portals: You can go in the End and get back to your spawnpoint. If you're far from Charleville-Mézières you can just break your bed, go in the End (or die) and tada you're at CVM</li>
                 </ul>
                 <h3>Other</h3>
                 <p>We (PESTO) would appreciate if you told us:</p>
                 <ul>
                     <li>If you built a line and it doesn't show up on the map or the train router</li>
-                    <li>If you plan on building a line (so we can add it in the form of a doted line on the map)</li>
+                    <li>If you plan on building a line (so we can add it in the form of a dotted line on the map)</li>
                     <li>If you have a question :)</li>
                 </ul>
-                <p>Please note that this router takes in account lines that are planned but not built. To avoid confusion, chunks of itinerary that aren't build are shown taking an hour.</p>
+                <p>Please note that this router takes in account lines that are planned but not built. To avoid confusion, chunks of itinerary that aren't built are shown taking an hour.</p>
                 <p>For the moment, it only includes European LSR. I'm aware there is some LSR in Americas and Australia, I'll add them soon-ish™</p>
                 <!----><button id="show-config" class="tab" style="display: block; margin-top: 15px;">Switch to Configuration</button>
             </div>
-            
+
             <div id="tab-config" class="tab-content" style="display: none;">
                 <div class="admin-controls">
                     <button id="save-data">Save Network Data</button>
@@ -259,14 +259,14 @@
               "type": "lsr",
               "segments": [
                 {
-                  "from": "Brest (PL)",
-                  "to": "Bresť (PL)",
+                  "from": "Brest (BY)",
+                  "to": "Bresť (BY)",
                   "time": 01
                 }
               ]
             },
-              
-              
+
+
             {
               "id": "lsr1",
               "name": "LSR 1 (Brighton Red Line)",
@@ -321,7 +321,7 @@
                 },
                 {
                   "from": "Rasht",
-                  "to": "Baïkonur - End Portal",
+                  "to": "Baikonur - End Portal",
                   "time": 300
                 }
               ]
@@ -542,7 +542,7 @@
 
             {
             "id": "lsr11",
-            "name": "LSR 11 (Dzwina Line)",
+            "name": "LSR 11 (Dźwina Line)",
             "color": "#4c90cd",
             "type": "lsr",
             "segments": [
@@ -589,11 +589,11 @@
                 },
                 {
                 "from": "Bydgoszcz",
-                "to": "Plock",
+                "to": "Płock",
                 "time": 3600
                 },
                 {
-                "from": "Plock",
+                "from": "Płock",
                 "to": "- Warsaw Central",
                 "time": 3600
                 },
@@ -636,11 +636,11 @@
             "segments": [
                 {
                 "from": "- Warsaw Central",
-                "to": "Bresť (BY)",
+                "to": "Brest (BY)",
                 "time": 40
                 },
                 {
-                "from": "Bresť (BY)",
+                "from": "Brest (BY)",
                 "to": "Kyiv",
                 "time": 105
                 },
@@ -699,7 +699,7 @@
             "segments": [
                 {
                 "from": "Rasht",
-                "to": "Altaïr",
+                "to": "Altair",
                 "time": 3600
                 }
             ]
@@ -778,11 +778,11 @@
                 },
                 {
                 "from": "Zagreb",
-                "to": "Llubljana",
+                "to": "Ljubljana",
                 "time": 3600
                 },
                 {
-                "from": "Llubljana",
+                "from": "Ljubljana",
                 "to": "Venice",
                 "time": 3600
                 }
@@ -809,11 +809,11 @@
                 },
                 {
                 "from": "Podgorica",
-                "to": "Pristina",
+                "to": "Priština",
                 "time": 3600
                 },
                 {
-                "from": "Pristina",
+                "from": "Priština",
                 "to": "Tirana",
                 "time": 3600
                 }
@@ -891,7 +891,7 @@
         };
 
         let networkData = JSON.parse(JSON.stringify(defaultNetworkData));
-        
+
         // DOM elements
         const startSelect = document.getElementById('start-station');
         const endSelect = document.getElementById('end-station');
@@ -928,7 +928,7 @@
         // Get all unique stations from all lines (both LSR and HSR)
         function getAllStations() {
             const stations = new Set();
-            
+
             networkData.lines.forEach(line => {
                 if (line.type === "lsr") {
                     line.segments.forEach(segment => {
@@ -941,26 +941,26 @@
                     });
                 }
             });
-            
+
             return Array.from(stations).sort();
         }
 
         // Populate station dropdowns
         function populateStations() {
             const stations = getAllStations();
-            
+
             startSelect.innerHTML = '';
             endSelect.innerHTML = '';
-            
+
             stations.forEach(station => {
                 const startOption = document.createElement('option');
                 startOption.value = station;
                 startOption.textContent = station;
-                
+
                 const endOption = document.createElement('option');
                 endOption.value = station;
                 endOption.textContent = station;
-                
+
                 startSelect.appendChild(startOption);
                 endSelect.appendChild(endOption);
             });
@@ -972,7 +972,7 @@
             saveDataBtn.addEventListener('click', saveNetworkData);
             resetDefaultBtn.addEventListener('click', resetToDefaultData);
             showConfigBtn.addEventListener('click', () => switchTab('config'));
-            
+
             // Tab switching
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
@@ -990,7 +990,7 @@
                     tab.classList.remove('active');
                 }
             });
-            
+
             tabContents.forEach(content => {
                 if (content.id === `tab-${tabId}`) {
                     content.style.display = 'block';
@@ -1028,12 +1028,12 @@
         // Build a graph representation of the network (including both LSR and HSR)
         function buildGraph() {
             const graph = {};
-            
+
             // Initialize graph with all stations
             getAllStations().forEach(station => {
                 graph[station] = {};
             });
-            
+
             // Add LSR connections
             networkData.lines.forEach(line => {
                 if (line.type === "lsr") {
@@ -1044,7 +1044,7 @@
                             line: line.id,
                             type: "lsr"
                         };
-                        
+
                         graph[segment.to][segment.from] = {
                             time: segment.time,
                             line: line.id,
@@ -1059,7 +1059,7 @@
                             line: line.id,
                             type: "hsr"
                         };
-                        
+
                         graph[connection.to][connection.from] = {
                             time: connection.time,
                             line: line.id,
@@ -1068,7 +1068,7 @@
                     });
                 }
             });
-            
+
             return graph;
         }
 
@@ -1076,12 +1076,12 @@
         function findAndDisplayRoute() {
             const startStation = startSelect.value;
             const endStation = endSelect.value;
-            
+
             if (startStation === endStation) {
                 resultDiv.innerHTML = "<p>Start and destination stations are the same.</p>";
                 return;
             }
-            
+
             const route = findRoute(startStation, endStation);
             displayRoute(route);
         }
@@ -1090,25 +1090,25 @@
         function findRoute(start, end) {
             // Build a graph representation of the network
             const graph = buildGraph();
-            
+
             // Use Dijkstra's algorithm to find the shortest path
             const { distances, previous } = dijkstra(graph, start);
-            
+
             // If there's no path to the destination
             if (distances[end] === Infinity) {
                 return null;
             }
-            
+
             // Reconstruct the path
             const path = [];
             let current = end;
-            
+
             while (current !== start) {
                 path.unshift(current);
                 current = previous[current];
             }
             path.unshift(start);
-            
+
             // Convert the path to a route with train lines
             return convertPathToRoute(path, graph);
         }
@@ -1118,68 +1118,68 @@
             const distances = {};
             const previous = {};
             const nodes = new Set();
-            
+
             // Initialize distances and add all nodes to the unvisited set
             Object.keys(graph).forEach(node => {
                 distances[node] = node === startNode ? 0 : Infinity;
                 previous[node] = null;
                 nodes.add(node);
             });
-            
+
             while (nodes.size > 0) {
                 // Find the node with the minimum distance
                 let minDistance = Infinity;
                 let minNode = null;
-                
+
                 nodes.forEach(node => {
                     if (distances[node] < minDistance) {
                         minDistance = distances[node];
                         minNode = node;
                     }
                 });
-                
+
                 // If the minimum distance is infinity, there are no more reachable nodes
                 if (minDistance === Infinity) break;
-                
+
                 // Remove the node from the unvisited set
                 nodes.delete(minNode);
-                
+
                 // Update distances to adjacent nodes
                 Object.keys(graph[minNode]).forEach(neighbor => {
                     const edge = graph[minNode][neighbor];
                     const alt = distances[minNode] + edge.time;
-                    
+
                     if (alt < distances[neighbor]) {
                         distances[neighbor] = alt;
                         previous[neighbor] = minNode;
                     }
                 });
             }
-            
+
             return { distances, previous };
         }
 
         // Convert a path of stations to a route with train lines
         function convertPathToRoute(path, graph) {
             const route = [];
-            
+
             for (let i = 0; i < path.length - 1; i++) {
                 const from = path[i];
                 const to = path[i + 1];
                 const connection = graph[from][to];
-                
+
                 // Find the line that this segment belongs to
                 const line = networkData.lines.find(l => l.id === connection.line);
-                
+
                 // If we're continuing on the same line and it's the same type (LSR or HSR)
-                if (route.length > 0 && 
-                    route[route.length - 1].line === line.id && 
+                if (route.length > 0 &&
+                    route[route.length - 1].line === line.id &&
                     route[route.length - 1].type === connection.type) {
-                    
+
                     const lastSegment = route[route.length - 1];
                     lastSegment.to = to;
                     lastSegment.stations.push(to);
-                    
+
                     if (connection.type === "lsr") {
                         lastSegment.time += connection.time;
                         lastSegment.segments.push({ from, to, time: connection.time });
@@ -1212,7 +1212,7 @@
                     }
                 }
             }
-            
+
             return route;
         }
 
@@ -1221,15 +1221,15 @@
             if (seconds < 60) {
                 return `${seconds} seconds`;
             }
-            
+
             const min = Math.floor(seconds / 60);
             const sec = seconds % 60;
-            
+
             if (sec === 0) {
-                return `${min} ${min === 1 ? 'minute' : 'minutes'}`;
+                return `${min} minute${min !== 1 ? 's' : ''}`;
             }
-            
-            return `${min} ${min === 1 ? 'minute' : 'minutes'} ${sec} ${sec === 1 ? 'second' : 'seconds'}`;
+
+            return `${min} minute${min !== 1 ? 's' : ''} ${sec} second${sec !== 1 ? 's' : ''}`;
         }
 
         // Display the route
@@ -1238,44 +1238,44 @@
                 resultDiv.innerHTML = "<p>No route found between these stations.</p>";
                 return;
             }
-            
+
             let totalTime = 0;
             let html = "<h2>Your Route</h2>";
-            
+
             route.forEach((segment, index) => {
                 totalTime += segment.time;
-                
+
                 const isHSR = segment.type === "hsr";
                 const hsrClass = isHSR ? "hsr-step" : "";
                 const hsrBadgeClass = isHSR ? "hsr-badge" : "";
-                
+
                 html += `<div class="route-step ${hsrClass}">`;
                 html += `<div><span class="line-badge ${hsrBadgeClass}" style="background-color: ${segment.lineColor}">${segment.lineName}</span>`;
-                
+
                 if (index === 0) {
                     html += `From <strong>${segment.from}</strong>`;
                 } else {
                     html += `Continue from <strong class="transfer-station">${segment.from}</strong>`;
                 }
-                
+
                 if (index === route.length - 1) {
                     html += ` to <strong>${segment.to}</strong>`;
                 } else {
                     html += ` to <strong class="transfer-station">${segment.to}</strong>`;
                 }
-                
+
                 html += `</div>`;
-                
+
                 // For LSR lines with intermediate stations
                 if (segment.type === "lsr" && segment.stations.length > 2) {
                     html += `<div class="station-count">Pass through: ${segment.stations.slice(1, -1).join(", ")}</div>`;
                 }
-                
+
                 // For HSR lines
                 if (segment.type === "hsr") {
                     html += `<div class="station-count"><strong>Express direct connection</strong></div>`;
                 }
-                
+
                 // Show detailed segment times for LSR
                 if (segment.type === "lsr" && segment.segments && segment.segments.length > 1) {
                     html += `<div class="station-count">`;
@@ -1284,23 +1284,23 @@
                     });
                     html += `</div>`;
                 }
-                
+
                 html += `<div class="station-count">Total: ${formatTime(segment.time)}`;
-                
+
                 if (segment.type === "lsr") {
                     html += ` (${segment.stations.length - 1} stops)`;
                 }
-                
+
                 html += `</div>`;
                 html += `</div>`;
-                
+
                 if (index < route.length - 1) {
                     html += `<div class="route-step" style="padding-left: 20px">Transfer at <strong class="transfer-station">${segment.to}</strong> to ${route[index + 1].lineName}</div>`;
                 }
             });
-            
+
             html += `<div class="total-time">Total journey time: ${formatTime(totalTime)}</div>`;
-            
+
             resultDiv.innerHTML = html;
         }
 
