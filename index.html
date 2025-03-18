@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
             padding: 20px;
             color: #333;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -20,30 +22,36 @@
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
             color: #588157;
         }
+
         h2 {
             color: #60a558;
             border-bottom: 1px solid #ddd;
             padding-bottom: 8px;
         }
+
         .form-container {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 20px;
         }
+
         .input-group {
             flex: 1;
             min-width: 200px;
         }
+
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
+
         select {
             width: 100%;
             padding: 8px;
@@ -51,6 +59,7 @@
             border-radius: 4px;
             background-color: #f9f9f9;
         }
+
         button {
             padding: 10px 15px;
             background-color: #588157;
@@ -61,14 +70,17 @@
             font-weight: bold;
             transition: background-color 0.3s;
         }
+
         button:hover {
             background-color: #60a558;
         }
+
         #result {
             margin-top: 20px;
             border-top: 1px solid #ddd;
             padding-top: 20px;
         }
+
         .route-step {
             margin-bottom: 10px;
             padding: 10px;
@@ -76,9 +88,11 @@
             border-radius: 4px;
             border-left: 4px solid #60a558;
         }
+
         .hsr-step {
             border-left: 4px solid #60a558;
         }
+
         .line-badge {
             display: inline-block;
             padding: 3px 8px;
@@ -87,10 +101,12 @@
             font-weight: bold;
             margin-right: 5px;
         }
+
         .hsr-badge {
             background-color: #094baf;
             position: relative;
         }
+
         .hsr-badge::after {
             content: "★";
             font-size: 10px;
@@ -102,19 +118,23 @@
             padding: 1px 3px;
             border-radius: 3px;
         }
+
         .admin-section {
             margin-top: 30px;
             padding-top: 20px;
             border-top: 2px dashed #ddd;
         }
+
         .admin-controls {
             display: flex;
             gap: 10px;
             margin-bottom: 10px;
         }
+
         .admin-controls button {
             flex: 1;
         }
+
         textarea {
             width: 100%;
             height: 300px;
@@ -123,30 +143,36 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+
         .transfer-station {
             font-weight: bold;
             color: #60a558;
         }
+
         .station-count {
             color: #666;
             font-size: 0.9em;
             margin-top: 5px;
         }
+
         .total-time {
             font-weight: bold;
             margin-top: 10px;
             font-size: 1.1em;
         }
+
         .help-text {
             margin-top: 10px;
             font-size: 0.9em;
             color: #666;
         }
+
         .tabs {
             display: flex;
             border-bottom: 1px solid #ddd;
             margin-bottom: 15px;
         }
+
         .tab {
             padding: 8px 15px;
             cursor: pointer;
@@ -156,12 +182,14 @@
             border-radius: 4px 4px 0 0;
             background-color: #f5f5f5;
         }
+
         .tab.active {
             background-color: white;
             border-bottom: 1px solid white;
             margin-bottom: -1px;
             font-weight: bold;
         }
+
         @media (max-width: 600px) {
             .form-container {
                 flex-direction: column;
@@ -169,6 +197,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>CARBONARA</h1>
@@ -250,645 +279,829 @@
     </div>
 
     <script>
+        const root = 0;
+        const parent = i => ((i + 1) >>> 1) - 1;
+        const left = i => (i << 1) + 1;
+        const right = i => (i + 1) << 1;
+
+        class PriorityQueue {
+            constructor(comparator = (a, b) => a > b) {
+                this._heap = [];
+                this._comparator = comparator;
+            }
+            size() {
+                return this._heap.length;
+            }
+            isEmpty() {
+                return this.size() == 0;
+            }
+            peek() {
+                return this._heap[root];
+            }
+            push(...values) {
+                values.forEach(value => {
+                    this._heap.push(value);
+                    this._siftUp();
+                });
+                return this.size();
+            }
+            pop() {
+                const poppedValue = this.peek();
+                const bottom = this.size() - 1;
+                if (bottom > root) {
+                    this._swap(root, bottom);
+                }
+                this._heap.pop();
+                this._siftDown();
+                return poppedValue;
+            }
+            replace(value) {
+                const replacedValue = this.peek();
+                this._heap[root] = value;
+                this._siftDown();
+                return replacedValue;
+            }
+            _greater(i, j) {
+                return this._comparator(this._heap[i], this._heap[j]);
+            }
+            _swap(i, j) {
+                [this._heap[i], this._heap[j]] = [this._heap[j], this._heap[i]];
+            }
+            _siftUp() {
+                let node = this.size() - 1;
+                while (node > root && this._greater(node, parent(node))) {
+                    this._swap(node, parent(node));
+                    node = parent(node);
+                }
+            }
+            _siftDown() {
+                let node = root;
+                while (
+                    (left(node) < this.size() && this._greater(left(node), node)) ||
+                    (right(node) < this.size() && this._greater(right(node), node))
+                ) {
+                    let maxChild = (right(node) < this.size() && this._greater(right(node), left(node))) ? right(node) : left(node);
+                    this._swap(node, maxChild);
+                    node = maxChild;
+                }
+            }
+        }
+
         // Default example network data with both LSR and HSR
         const defaultNetworkData = {
             lines: [
-            {
-              "id": "lsr0",
-              "name": "Walk",
-              "color": "#dddddd",
-              "type": "lsr",
-              "segments": [
                 {
-                  "from": "Brest (BY)",
-                  "to": "Bresť (BY)",
-                  "time": 01
+                    id: "lsr1",
+                    name: "Brighton Red Line",
+                    colour: "#ed1c2a",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr3",
+                    name: "Big Bridge",
+                    colour: "#f59fb3",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr4",
+                    name: "Vistula Express Line",
+                    colour: "#080e5c",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr5",
+                    name: "Tatra Line",
+                    colour: "#f78f4b",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr6",
+                    name: "Baltic Line",
+                    colour: "#ed1c2a",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr7",
+                    name: "Birmingham Yellow Line",
+                    colour: "#ffcd02",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr8",
+                    name: "Newcastle Green Line",
+                    colour: "#77c696",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr9",
+                    name: "Atlantic Line",
+                    colour: "#87d3df",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr10",
+                    name: "LSR 10",
+                    colour: "#662c91",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr11",
+                    name: "Dźwina Line",
+                    colour: "#4c90cd",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr12",
+                    name: "Vistula Line",
+                    colour: "#008c5a",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr13",
+                    name: "Carpathia Line",
+                    colour: "#e0b03b",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr14",
+                    name: "Dnieper Line",
+                    colour: "#ffcd02",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr15",
+                    name: "LSR 15",
+                    colour: "#b80b4b",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr16",
+                    name: "LSR 16",
+                    colour: "#c5a3cd",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr30",
+                    name: "Big Bridge Zugdidi Branch",
+                    colour: "#b80b4b",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr31",
+                    name: "Big Bridge Thessaloniki Branch",
+                    colour: "#bb4a9b",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr32",
+                    name: "Big Bridge Istanbul Branch",
+                    colour: "#c5a3cd",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr33",
+                    name: "Big Bridge Mequinenza Branch",
+                    colour: "#b80b4b",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr50",
+                    name: "LSR 50",
+                    colour: "#ed1c2a",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr51",
+                    name: "LSR 51",
+                    colour: "#080e5c",
+                    type: "lsr"
+                },
+                {
+                    id: "lsr999",
+                    name: "Miscellaneous Connections",
+                    colour: "#79edba",
+                    type: "lsr"
+                },
+                {
+                    id: "hsr1",
+                    name: "Blue HSR",
+                    colour: "#4c90cd",
+                    type: "hsr"
+                },
+                {
+                    id: "hsr2",
+                    name: "Green HSR",
+                    colour: "#30a442",
+                    type: "hsr"
                 }
-              ]
-            },
-
-
-            {
-              "id": "lsr1",
-              "name": "LSR 1 (Brighton Red Line)",
-              "color": "#ed1c2a",
-              "type": "lsr",
-              "segments": [
-                {
-                  "from": "- Queen's Cross",
-                  "to": "Brighton",
-                  "time": 40
-                },
-                {
-                  "from": "Brighton",
-                  "to": "Southampton",
-                  "time": 15
-                },
-                {
-                  "from": "Southampton",
-                  "to": "Plymouth - Cornwall",
-                  "time": 70
-                }
-              ]
-            },
-
-
-
-            {
-              "id": "lsr3",
-              "name": "LSR 3 (Big Bridge)",
-              "color": "#f59fb3",
-              "type": "lsr",
-              "segments": [
-                {
-                  "from": "- Charleville-Mézières",
-                  "to": "PlaceholderOne",
-                  "time": 115
-                },
-                {
-                  "from": "PlaceholderOne",
-                  "to": "PlaceholderTwo",
-                  "time": 280
-                },
-                {
-                  "from": "PlaceholderTwo",
-                  "to": "Antalya",
-                  "time": 105
-                },
-                {
-                  "from": "Antalya",
-                  "to": "Rasht",
-                  "time": 250
-                },
-                {
-                  "from": "Rasht",
-                  "to": "Baikonur - End Portal",
-                  "time": 300
-                }
-              ]
-            },
-
-
-            {
-              "id": "lsr4",
-              "name": "LSR 4 (Vistula Express Line)",
-              "color": "#080e5c",
-              "type": "lsr",
-              "segments": [
-                {
-                  "from": "Gdańsk",
-                  "to": "- Warsaw Central",
-                  "time": 65
-                }
-              ]
-            },
-
-
-
-            {
-              "id": "lsr5",
-              "name": "LSR 5 (Tatra Line)",
-              "color": "#f78f4b",
-              "type": "lsr",
-              "segments": [
-                {
-                  "from": "- Warsaw Central",
-                  "to": "Katowice",
-                  "time": 30
-                },
-                {
-                  "from": "Katowice",
-                  "to": "Kosice",
-                  "time": 40
-                },
-                {
-                  "from": "Kosice",
-                  "to": "Belgrade",
-                  "time": 65
-                },
-                {
-                  "from": "Belgrade",
-                  "to": "Thessaloniki",
-                  "time": 75
-                }
-              ]
-            },
-
-
-
-            {
-              "id": "lsr6",
-              "name": "LSR 6 (Baltic Line)",
-              "color": "#ed1c2a",
-              "type": "lsr",
-              "segments": [
-                {
-                  "from": "Kiel",
-                  "to": "Szczecin",
-                  "time": 70
-                },
-                {
-                  "from": "Szczecin",
-                  "to": "Gdańsk",
-                  "time": 65
-                },
-                {
-                  "from": "Gdańsk",
-                  "to": "Królewiec",
-                  "time": 3600
-                },
-                {
-                  "from": "Królewiec",
-                  "to": "Kaunas",
-                  "time": 3600
-                },
-                {
-                  "from": "Kaunas",
-                  "to": "Riga",
-                  "time": 3600
-                },
-                {
-                  "from": "Riga",
-                  "to": "Tallinn",
-                  "time": 3600
-                }
-              ]
-            },
-
-
-
-            {
-              "id": "lsr7",
-              "name": "LSR 7 (Birmingham Yellow Line)",
-              "color": "#ffcd02",
-              "type": "lsr",
-              "segments": [
-                {
-                  "from": "- Queen's Cross",
-                  "to": "Birmingham",
-                  "time": 45
-                },
-                {
-                  "from": "Birmingham",
-                  "to": "Liverpool",
-                  "time": 30
-                },
-                {
-                  "from": "Liverpool",
-                  "to": "Isle of Man",
-                  "time": 40
-                }
-              ]
-            },
-
-
-
-            {
-            "id": "lsr8",
-            "name": "LSR 8 (Newcastle Green Line)",
-            "color": "#77c696",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "Newcastle",
-                "to": "Birmingham",
-                "time": 30
-                },
-                {
-                "from": "Birmingham",
-                "to": "Southampton",
-                "time": 15
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr9",
-            "name": "LSR 9 (Atlantic Line)",
-            "color": "#87d3df",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "Southampton",
-                "to": "- Rennes",
-                "time": 50
-                },
-                {
-                "from": "- Rennes",
-                "to": "La Rochelle",
-                "time": 3600
-                },
-                {
-                "from": "La Rochelle",
-                "to": "Bordeaux",
-                "time": 3600
-                },
-                {
-                "from": "Bordeaux",
-                "to": "Pyrénées",
-                "time": 3600
-                },
-                {
-                "from": "Pyrénées",
-                "to": "- Mequinenza",
-                "time": 3600
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr10",
-            "name": "LSR 10",
-            "color": "#662c91",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "Brest (FR)",
-                "to": "- Rennes",
-                "time": 3600
-                },
-                {
-                "from": "- Rennes",
-                "to": "Étampes",
-                "time": 3600
-                },
-                {
-                "from": "Étampes",
-                "to": "Reims",
-                "time": 3600
-                },
-                {
-                "from": "Reims",
-                "to": "- Charleville-Mézières",
-                "time": 3600
-                },
-                {
-                "from": "- Charleville-Mézières",
-                "to": "Düsseldorf",
-                "time": 3600
-                },
-                {
-                "from": "Düsseldorf",
-                "to": "Kiel",
-                "time": 3600
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr11",
-            "name": "LSR 11 (Dźwina Line)",
-            "color": "#4c90cd",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "- Warsaw Central",
-                "to": "Brest (BY)",
-                "time": 40
-                },
-                {
-                "from": "Brest (BY)",
-                "to": "Kaunas",
-                "time": 50
-                },
-                {
-                "from": "Kaunas",
-                "to": "Riga",
-                "time": 30
-                },
-                {
-                "from": "Riga",
-                "to": "Tallinn",
-                "time": 30
-                },
-                {
-                "from": "Tallinn",
-                "to": "Helsinki",
-                "time": 20
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr12",
-            "name": "LSR 12 (Vistula Line)",
-            "color": "#008c5a",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "Gdańsk",
-                "to": "Bydgoszcz",
-                "time": 3600
-                },
-                {
-                "from": "Bydgoszcz",
-                "to": "Płock",
-                "time": 3600
-                },
-                {
-                "from": "Płock",
-                "to": "- Warsaw Central",
-                "time": 3600
-                },
-                {
-                "from": "- Warsaw Central",
-                "to": "Lublin",
-                "time": 3600
-                },
-                {
-                "from": "Lublin",
-                "to": "Katowice",
-                "time": 3600
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr13",
-            "name": "LSR 13 (Capathia Line)",
-            "color": "#e0b03b",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "- Warsaw Central",
-                "to": "Carpathia",
-                "time": 3600
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr14",
-            "name": "LSR 14 (Dnieper Line)",
-            "color": "#ffcd02",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "- Warsaw Central",
-                "to": "Brest (BY)",
-                "time": 40
-                },
-                {
-                "from": "Brest (BY)",
-                "to": "Kyiv",
-                "time": 105
-                },
-                {
-                "from": "Kyiv",
-                "to": "Odessa",
-                "time": 50
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr15",
-            "name": "LSR 15",
-            "color": "#b80b4b",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "Thessaloniki",
-                "to": "Tirana",
-                "time": 45
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr16",
-            "name": "LSR 16",
-            "color": "#c5a3cd",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "Tirana",
-                "to": "Bari",
-                "time": 50
-                },
-                {
-                "from": "Bari",
-                "to": "Catania",
-                "time": 3600
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr30",
-            "name": "LSR 30",
-            "color": "#b80b4b",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "Rasht",
-                "to": "Altair",
-                "time": 3600
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr31",
-            "name": "LSR 31",
-            "color": "#bb4a9b",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "PlaceholderTwo",
-                "to": "Thessaloniki",
-                "time": 3600
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr32",
-            "name": "LSR 32",
-            "color": "#c5a3cd",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "Antalya",
-                "to": "Istanbul",
-                "time": 70
-                },
-                {
-                "from": "Istanbul",
-                "to": "Slime Farm",
-                "time": 95
-                },
-                {
-                "from": "Slime Farm",
-                "to": "Odessa",
-                "time": 30
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr33",
-            "name": "LSR 33",
-            "color": "#b80b4b",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "PlaceholderOne",
-                "to": "- Mequinenza",
-                "time": 3600
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr50",
-            "name": "LSR 50",
-            "color": "#ed1c2a",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "Belgrade",
-                "to": "Zagreb",
-                "time": 3600
-                },
-                {
-                "from": "Zagreb",
-                "to": "Ljubljana",
-                "time": 3600
-                },
-                {
-                "from": "Ljubljana",
-                "to": "Venice",
-                "time": 3600
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "lsr51",
-            "name": "LSR 51",
-            "color": "#080e5c",
-            "type": "lsr",
-            "segments": [
-                {
-                "from": "Belgrade",
-                "to": "Sarajevo",
-                "time": 3600
-                },
-                {
-                "from": "Sarajevo",
-                "to": "Podgorica",
-                "time": 3600
-                },
-                {
-                "from": "Podgorica",
-                "to": "Priština",
-                "time": 3600
-                },
-                {
-                "from": "Priština",
-                "to": "Tirana",
-                "time": 3600
-                }
-            ]
-            },
-
-
-
-
-            {
-            "id": "express1",
-            "name": "Blue HSR",
-            "color": "#4c90cd",
-            "type": "hsr",
-            "terminuses": [
-                "- Amsterdam Centraal",
-                "- Charleville-Mézières",
-                "- Queen's Cross",
-                "- Rennes"
             ],
-            "connections": [
+            stations: [
                 {
-                "from": "- Amsterdam Centraal",
-                "to": "- Charleville-Mézières",
-                "time": 40
+                    name: "Queen's Cross"
                 },
                 {
-                "from": "- Amsterdam Centraal",
-                "to": "- Queen's Cross",
-                "time": 65
+                    name: "Brighton"
                 },
                 {
-                "from": "- Amsterdam Centraal",
-                "to": "- Rennes",
-                "time": 85
+                    name: "Southampton"
                 },
                 {
-                "from": "- Charleville-Mézières",
-                "to": "- Queen's Cross",
-                "time": 65
+                    name: "Plymouth"
                 },
                 {
-                "from": "- Charleville-Mézières",
-                "to": "- Rennes",
-                "time": 85
+                    name: "Charleville-Mézières"
                 },
                 {
-                "from": "- Queen's Cross",
-                "to": "- Rennes",
-                "time": 60
-                }
-            ]
-            },
-
-
-
-            {
-            "id": "express2",
-            "name": "Green HSR",
-            "color": "#30a442",
-            "type": "hsr",
-            "terminuses": [
-                "- Amsterdam Centraal",
-                "- Warsaw Central"
+                    name: "West Mediterranean"
+                },
+                {
+                    name: "Catania"
+                },
+                {
+                    name: "Antalya"
+                },
+                {
+                    name: "Rasht"
+                },
+                {
+                    name: "Baikonur End Portal"
+                },
+                {
+                    name: "Gdańsk"
+                },
+                {
+                    name: "Warsaw Central"
+                },
+                {
+                    name: "Katowice"
+                },
+                {
+                    name: "Košice"
+                },
+                {
+                    name: "Belgrade"
+                },
+                {
+                    name: "Thessaloniki"
+                },
+                {
+                    name: "Kiel"
+                },
+                {
+                    name: "Szczecin"
+                },
+                {
+                    name: "Królewiec"
+                },
+                {
+                    name: "Kaunas"
+                },
+                {
+                    name: "Riga"
+                },
+                {
+                    name: "Tallinn"
+                },
+                {
+                    name: "Birmingham"
+                },
+                {
+                    name: "Liverpool"
+                },
+                {
+                    name: "Isle of Man"
+                },
+                {
+                    name: "Newcastle"
+                },
+                {
+                    name: "Rennes"
+                },
+                {
+                    name: "La Rochelle"
+                },
+                {
+                    name: "Bordeaux"
+                },
+                {
+                    name: "Pyrenees"
+                },
+                {
+                    name: "Mequinenza"
+                },
+                {
+                    name: "Gesalibar"
+                },
+                {
+                    name: "Brest (FR)"
+                },
+                {
+                    name: "Étampes"
+                },
+                {
+                    name: "Reims"
+                },
+                {
+                    name: "Düsseldorf"
+                },
+                {
+                    name: "Brest (BY)"
+                },
+                {
+                    name: "Helsinki"
+                },
+                {
+                    name: "Bydgoszcz"
+                },
+                {
+                    name: "Płock"
+                },
+                {
+                    name: "Lublin"
+                },
+                {
+                    name: "Carpathia"
+                },
+                {
+                    name: "Kyiv"
+                },
+                {
+                    name: "Odessa"
+                },
+                {
+                    name: "Romanian Slime Farm"
+                },
+                {
+                    name: "Istanbul"
+                },
+                {
+                    name: "Tirana"
+                },
+                {
+                    name: "Bari"
+                },
+                {
+                    name: "Zugdidi"
+                },
+                {
+                    name: "Zagreb"
+                },
+                {
+                    name: "Ljubljana"
+                },
+                {
+                    name: "Venice"
+                },
+                {
+                    name: "Sarajevo"
+                },
+                {
+                    name: "Podgorica"
+                },
+                {
+                    name: "Pristina"
+                },
+                {
+                    name: "Amsterdam Centraal"
+                },
+                {
+                    name: "Karlsruhe"
+                },
             ],
-            "connections": [
+            connections: [
                 {
-                "from": "- Amsterdam Centraal",
-                "to": "- Warsaw Central",
-                "time": 165
+                    from: "Queen's Cross",
+                    to: "Brighton",
+                    line_id: "lsr1",
+                    time: 40
+                },
+                {
+                    from: "Brighton",
+                    to: "Southampton",
+                    line_id: "lsr1",
+                    time: 20
+                },
+                {
+                    from: "Southampton",
+                    to: "Plymouth",
+                    line_id: "lsr1",
+                    time: 70
+                },
+                {
+                    from: "Charleville-Mézières",
+                    to: "West Mediterranean",
+                    line_id: "lsr3",
+                    time: 115
+                },
+                {
+                    from: "West Mediterranean",
+                    to: "Catania",
+                    line_id: "lsr3",
+                    time: 185
+                },
+                {
+                    from: "Catania",
+                    to: "Antalya",
+                    line_id: "lsr3",
+                    time: 205
+                },
+                {
+                    from: "Antalya",
+                    to: "Rasht",
+                    line_id: "lsr3",
+                    time: 245
+                },
+                {
+                    from: "Rasht",
+                    to: "Baikonur End Portal",
+                    line_id: "lsr3",
+                    time: 300
+                },
+                {
+                    from: "Gdańsk",
+                    to: "Warsaw Central",
+                    line_id: "lsr4",
+                    time: 65
+                },
+                {
+                    from: "Warsaw Central",
+                    to: "Katowice",
+                    line_id: "lsr5",
+                    time: 30
+                },
+                {
+                    from: "Katowice",
+                    to: "Košice",
+                    line_id: "lsr5",
+                    time: 40
+                },
+                {
+                    from: "Košice",
+                    to: "Belgrade",
+                    line_id: "lsr5",
+                    time: 55
+                },
+                {
+                    from: "Belgrade",
+                    to: "Thessaloniki",
+                    line_id: "lsr5",
+                    time: 85
+                },
+                {
+                    from: "Kiel",
+                    to: "Szczecin",
+                    line_id: "lsr6",
+                    time: 70
+                },
+                {
+                    from: "Szczecin",
+                    to: "Gdańsk",
+                    line_id: "lsr6",
+                    time: 65
+                },
+                {
+                    from: "Gdańsk",
+                    to: "Królewiec",
+                    line_id: "lsr6",
+                    time: null
+                },
+                {
+                    from: "Królewiec",
+                    to: "Kaunas",
+                    line_id: "lsr6",
+                    time: null
+                },
+                {
+                    from: "Kaunas",
+                    to: "Riga",
+                    line_id: "lsr6",
+                    time: null
+                },
+                {
+                    from: "Riga",
+                    to: "Tallinn",
+                    line_id: "lsr6",
+                    time: null
+                },
+                {
+                    from: "Queen's Cross",
+                    to: "Birmingham",
+                    line_id: "lsr7",
+                    time: 45
+                },
+                {
+                    from: "Birmingham",
+                    to: "Liverpool",
+                    line_id: "lsr7",
+                    time: 30
+                },
+                {
+                    from: "Liverpool",
+                    to: "Isle of Man",
+                    line_id: "lsr7",
+                    time: 40
+                },
+                {
+                    from: "Southampton",
+                    to: "Birmingham",
+                    line_id: "lsr8",
+                    time: 20
+                },
+                {
+                    from: "Birmingham",
+                    to: "Newcastle",
+                    line_id: "lsr8",
+                    time: 30
+                },
+                {
+                    from: "Southampton",
+                    to: "Rennes",
+                    line_id: "lsr9",
+                    time: 45
+                },
+                {
+                    from: "Rennes",
+                    to: "La Rochelle",
+                    line_id: "lsr9",
+                    time: null
+                },
+                {
+                    from: "La Rochelle",
+                    to: "Bordeaux",
+                    line_id: "lsr9",
+                    time: null
+                },
+                {
+                    from: "Bordeaux",
+                    to: "Pyrenees",
+                    line_id: "lsr9",
+                    time: null
+                },
+                {
+                    from: "Pyrenees",
+                    to: "Mequinenza",
+                    line_id: "lsr9",
+                    time: null
+                },
+                {
+                    from: "Brest (FR)",
+                    to: "Rennes",
+                    line_id: "lsr10",
+                    time: null
+                },
+                {
+                    from: "Rennes",
+                    to: "Étampes",
+                    line_id: "lsr10",
+                    time: null
+                },
+                {
+                    from: "Étampes",
+                    to: "Reims",
+                    line_id: "lsr10",
+                    time: null
+                },
+                {
+                    from: "Reims",
+                    to: "Charleville-Mézières",
+                    line_id: "lsr10",
+                    time: null
+                },
+                {
+                    from: "Charleville-Mézières",
+                    to: "Düsseldorf",
+                    line_id: "lsr10",
+                    time: null
+                },
+                {
+                    from: "Düsseldorf",
+                    to: "Kiel",
+                    line_id: "lsr10",
+                    time: null
+                },
+                {
+                    from: "Warsaw Central",
+                    to: "Brest (BY)",
+                    line_id: "lsr11",
+                    time: 40
+                },
+                {
+                    from: "Brest (BY)",
+                    to: "Riga",
+                    line_id: "lsr11",
+                    time: 85
+                },
+                {
+                    from: "Riga",
+                    to: "Tallinn",
+                    line_id: "lsr11",
+                    time: 30
+                },
+                {
+                    from: "Tallinn",
+                    to: "Helsinki",
+                    line_id: "lsr11",
+                    time: 20
+                },
+                {
+                    from: "Gdańsk",
+                    to: "Bydgoszcz",
+                    line_id: "lsr12",
+                    time: null
+                },
+                {
+                    from: "Bydgoszcz",
+                    to: "Płock",
+                    line_id: "lsr12",
+                    time: null
+                },
+                {
+                    from: "Płock",
+                    to: "Warsaw Central",
+                    line_id: "lsr12",
+                    time: null
+                },
+                {
+                    from: "Warsaw Central",
+                    to: "Lublin",
+                    line_id: "lsr12",
+                    time: null
+                },
+                {
+                    from: "Lublin",
+                    to: "Katowice",
+                    line_id: "lsr12",
+                    time: null
+                },
+                {
+                    from: "Warsaw Central",
+                    to: "Carpathia",
+                    line_id: "lsr13",
+                    time: null
+                },
+                {
+                    from: "Warsaw Central",
+                    to: "Brest (BY)",
+                    line_id: "lsr14",
+                    time: 40
+                },
+                {
+                    from: "Brest (BY)",
+                    to: "Kyiv",
+                    line_id: "lsr14",
+                    time: 105
+                },
+                {
+                    from: "Kyiv",
+                    to: "Odessa",
+                    line_id: "lsr14",
+                    time: 50
+                },
+                {
+                    from: "Thessaloniki",
+                    to: "Tirana",
+                    line_id: "lsr15",
+                    time: 45
+                },
+                {
+                    from: "Tirana",
+                    to: "Bari",
+                    line_id: "lsr16",
+                    time: 50
+                },
+                {
+                    from: "Bari",
+                    to: "Catania",
+                    line_id: "lsr16",
+                    time: 80
+                },
+                {
+                    from: "Rasht",
+                    to: "Zugdidi",
+                    line_id: "lsr30",
+                    time: 185
+                },
+                {
+                    from: "Antalya",
+                    to: "Istanbul",
+                    line_id: "lsr32",
+                    time: 70
+                },
+                {
+                    from: "West Mediterranean",
+                    to: "Mequinenza",
+                    line_id: "lsr33",
+                    time: 65
+                },
+                {
+                    from: "Belgrade",
+                    to: "Zagreb",
+                    line_id: "lsr50",
+                    time: 145
+                },
+                {
+                    from: "Zagreb",
+                    to: "Ljubljana",
+                    line_id: "lsr50",
+                    time: 45
+                },
+                {
+                    from: "Ljubljana",
+                    to: "Venice",
+                    line_id: "lsr50",
+                    time: 65
+                },
+                {
+                    from: "Belgrade",
+                    to: "Sarajevo",
+                    line_id: "lsr51",
+                    time: 100
+                },
+                {
+                    from: "Sarajevo",
+                    to: "Podgorica",
+                    line_id: "lsr51",
+                    time: 65
+                },
+                {
+                    from: "Podgorica",
+                    to: "Pristina",
+                    line_id: "lsr51",
+                    time: 30
+                },
+                {
+                    from: "Pristina",
+                    to: "Tirana",
+                    line_id: "lsr51",
+                    time: 65
+                },
+                {
+                    from: "Odessa",
+                    to: "Romanian Slime Farm",
+                    line_id: "lsr32",
+                    time: 35
+                },
+                {
+                    from: "Romanian Slime Farm",
+                    to: "Istanbul",
+                    line_id: "lsr32",
+                    time: 95
+                },
+                {
+                    from: "Charleville-Mézières",
+                    to: "Karlsruhe",
+                    line_id: "lsr999",
+                    time: 110
+                },
+                {
+                    from: "Mequinenza",
+                    to: "Gesalibar",
+                    line_id: "lsr999",
+                    time: 110
+                },
+                {
+                    from: "Charleville-Mézières",
+                    to: "Amsterdam Centraal",
+                    line_id: "hsr1",
+                    time: 40
+                },
+                {
+                    from: "Charleville-Mézières",
+                    to: "Rennes",
+                    line_id: "hsr1",
+                    time: 85
+                },
+                {
+                    from: "Charleville-Mézières",
+                    to: "Queen's Cross",
+                    line_id: "hsr1",
+                    time: 65
+                },
+                {
+                    from: "Amsterdam Centraal",
+                    to: "Rennes",
+                    line_id: "hsr1",
+                    time: 85
+                },
+                {
+                    from: "Amsterdam Centraal",
+                    to: "Queen's Cross",
+                    line_id: "hsr1",
+                    time: 65
+                },
+                {
+                    from: "Rennes",
+                    to: "Queen's Cross",
+                    line_id: "hsr1",
+                    time: 60
+                },
+                {
+                    from: "Amsterdam Centraal",
+                    to: "Warsaw Central",
+                    line_id: "hsr2",
+                    time: 165
                 }
             ]
-            }
-        ]
         };
 
         let networkData = JSON.parse(JSON.stringify(defaultNetworkData));
@@ -930,20 +1143,11 @@
         function getAllStations() {
             const stations = new Set();
 
-            networkData.lines.forEach(line => {
-                if (line.type === "lsr") {
-                    line.segments.forEach(segment => {
-                        stations.add(segment.from);
-                        stations.add(segment.to);
-                    });
-                } else if (line.type === "hsr") {
-                    line.terminuses.forEach(terminus => {
-                        stations.add(terminus);
-                    });
-                }
-            });
+            networkData.stations.forEach(station => {
+                stations.add(station.name);
+            })
 
-            return Array.from(stations).sort();
+            return Array.from(stations).sort((a, b) => a.localeCompare(b));
         }
 
         // Populate station dropdowns
@@ -1026,53 +1230,6 @@
             }
         }
 
-        // Build a graph representation of the network (including both LSR and HSR)
-        function buildGraph() {
-            const graph = {};
-
-            // Initialize graph with all stations
-            getAllStations().forEach(station => {
-                graph[station] = {};
-            });
-
-            // Add LSR connections
-            networkData.lines.forEach(line => {
-                if (line.type === "lsr") {
-                    line.segments.forEach(segment => {
-                        // Add bidirectional connections with the time as weight
-                        graph[segment.from][segment.to] = {
-                            time: segment.time,
-                            line: line.id,
-                            type: "lsr"
-                        };
-
-                        graph[segment.to][segment.from] = {
-                            time: segment.time,
-                            line: line.id,
-                            type: "lsr"
-                        };
-                    });
-                } else if (line.type === "hsr") {
-                    // Add HSR direct connections
-                    line.connections.forEach(connection => {
-                        graph[connection.from][connection.to] = {
-                            time: connection.time,
-                            line: line.id,
-                            type: "hsr"
-                        };
-
-                        graph[connection.to][connection.from] = {
-                            time: connection.time,
-                            line: line.id,
-                            type: "hsr"
-                        };
-                    });
-                }
-            });
-
-            return graph;
-        }
-
         // Find and display the optimal route
         function findAndDisplayRoute() {
             const startStation = startSelect.value;
@@ -1089,70 +1246,92 @@
 
         // Find the optimal route between two stations
         function findRoute(start, end) {
-            // Build a graph representation of the network
-            const graph = buildGraph();
+            const graph = {};
+
+            networkData.stations.forEach(station => {
+                const neighbours = [];
+
+                networkData.connections.forEach(({ from, to, line_id, time }) => {
+                    if (from === station.name) neighbours.push({ line_id, destination: to, time });
+                    if (to === station.name) neighbours.push({ line_id, destination: from, time });
+                });
+
+                graph[station.name] = neighbours;
+            })
 
             // Use Dijkstra's algorithm to find the shortest path
             const { distances, previous } = dijkstra(graph, start);
 
             // If there's no path to the destination
-            if (distances[end] === Infinity) {
-                return null;
+            let minNode = null;
+            let minTime = Infinity;
+
+            for (let neighbour of graph[end]) {
+                if (distances[`${end}-${neighbour.line_id}`] < minTime) {
+                    minTime = distances[`${end}-${neighbour.line_id}`];
+                    minNode = { destination: end, line_id: neighbour.line_id };
+                }
             }
+
+            if (minTime === Infinity) return null;
 
             // Reconstruct the path
-            const path = [];
-            let current = end;
+            const path = [{ line_id: minNode.line_id, destination: minNode.destination, time: -1 }];
+            let currentNode = minNode;
 
-            while (current !== start) {
-                path.unshift(current);
-                current = previous[current];
+            while (currentNode.destination !== start) {
+                const { station: prevStation, line_id: prevLineID, time: prevTime } = previous[`${currentNode.destination}-${currentNode.line_id}`];
+                path.push({ line_id: prevLineID, destination: prevStation, time: prevTime });
+                currentNode = { destination: prevStation, line_id: prevLineID };
             }
-            path.unshift(start);
+
+            path.reverse();
 
             // Convert the path to a route with train lines
-            return convertPathToRoute(path, graph);
+            return convertPathToRoute(path);
         }
 
         // Dijkstra's algorithm implementation
-        function dijkstra(graph, startNode) {
+        function dijkstra(graph, start) {
             const distances = {};
             const previous = {};
-            const nodes = new Set();
+            const pq = new PriorityQueue((a, b) => distances[`${a.destination}-${a.line_id}`] < distances[`${b.destination}-${b.line_id}`]);
+            const visited = new Set();
 
             // Initialize distances and add all nodes to the unvisited set
-            Object.keys(graph).forEach(node => {
-                distances[node] = node === startNode ? 0 : Infinity;
-                previous[node] = null;
-                nodes.add(node);
-            });
+            Object.values(graph).forEach((neighbours) => {
+                neighbours.forEach(({ line_id, destination }) => {
+                    const node = { destination, line_id };
+                    distances[`${destination}-${line_id}`] = destination === start ? 0 : Infinity;
+                    previous[`${destination}-${line_id}`] = null;
 
-            while (nodes.size > 0) {
+                    if (destination === start) pq.push(node);
+                })
+            })
+
+            while (!pq.isEmpty()) {
                 // Find the node with the minimum distance
-                let minDistance = Infinity;
-                let minNode = null;
+                const minNode = pq.pop();
 
-                nodes.forEach(node => {
-                    if (distances[node] < minDistance) {
-                        minDistance = distances[node];
-                        minNode = node;
-                    }
-                });
+                const { destination: minStation, line_id: minLine } = minNode;
 
                 // If the minimum distance is infinity, there are no more reachable nodes
-                if (minDistance === Infinity) break;
+                if (distances[`${minStation}-${minLine}`] === Infinity) break;
 
-                // Remove the node from the unvisited set
-                nodes.delete(minNode);
+                visited.add(minNode);
 
                 // Update distances to adjacent nodes
-                Object.keys(graph[minNode]).forEach(neighbor => {
-                    const edge = graph[minNode][neighbor];
-                    const alt = distances[minNode] + edge.time;
+                graph[minStation].forEach(({ line_id, destination, time }) => {
+                    if (time !== null && !visited.has({ destination, line_id })) {
+                        let alt = distances[`${minStation}-${minLine}`] + time;
 
-                    if (alt < distances[neighbor]) {
-                        distances[neighbor] = alt;
-                        previous[neighbor] = minNode;
+                        if (line_id !== minLine) alt += 0.1;
+
+                        if (alt < distances[`${destination}-${line_id}`]) {
+                            distances[`${destination}-${line_id}`] = alt;
+                            previous[`${destination}-${line_id}`] = { station: minStation, line_id: minLine, time };
+                            pq.push({ destination, line_id });
+                        }
                     }
                 });
             }
@@ -1161,54 +1340,47 @@
         }
 
         // Convert a path of stations to a route with train lines
-        function convertPathToRoute(path, graph) {
-            const route = [];
+        function convertPathToRoute(path) {
+            // convert path to route
+            route = [];
 
-            for (let i = 0; i < path.length - 1; i++) {
-                const from = path[i];
-                const to = path[i + 1];
-                const connection = graph[from][to];
 
-                // Find the line that this segment belongs to
-                const line = networkData.lines.find(l => l.id === connection.line);
+            for (let i = 0; i < path.length - 1; ++i) {
+                const { destination: from, time } = path[i];
+                const { line_id, destination: to } = path[i + 1];
+                const line = networkData.lines.find(l => l.id === line_id);
 
-                // If we're continuing on the same line and it's the same type (LSR or HSR)
-                if (route.length > 0 &&
-                    route[route.length - 1].line === line.id &&
-                    route[route.length - 1].type === connection.type) {
-
+                if (route.length > 0 && route[route.length - 1].lineName === line.name) {
                     const lastSegment = route[route.length - 1];
                     lastSegment.to = to;
-                    lastSegment.stations.push(to);
+                    lastSegment.stops.push(to);
 
-                    if (connection.type === "lsr") {
-                        lastSegment.time += connection.time;
-                        lastSegment.segments.push({ from, to, time: connection.time });
+                    if (line.type === "lsr") {
+                        lastSegment.time += time;
+                        lastSegment.segments.push({ from, to, line_id, time });
                     }
                 } else {
-                    // Starting a new line segment
-                    if (connection.type === "lsr") {
+                    if (line.type === "lsr") {
                         route.push({
                             from,
                             to,
-                            line: line.id,
                             lineName: line.name,
-                            lineColor: line.color,
+                            lineColour: line.colour,
                             type: "lsr",
-                            stations: [from, to],
-                            time: connection.time,
-                            segments: [{ from, to, time: connection.time }]
+                            stops: [from, to],
+                            time,
+                            segments: [{ from, to, line_id, time }]
                         });
                     } else { // HSR
                         route.push({
                             from,
                             to,
-                            line: line.id,
                             lineName: line.name,
-                            lineColor: line.color,
+                            lineColour: line.colour,
                             type: "hsr",
-                            stations: [from, to],
-                            time: connection.time
+                            stops: [from, to],
+                            time,
+                            segments: []
                         });
                     }
                 }
@@ -1251,7 +1423,7 @@
                 const hsrBadgeClass = isHSR ? "hsr-badge" : "";
 
                 html += `<div class="route-step ${hsrClass}">`;
-                html += `<div><span class="line-badge ${hsrBadgeClass}" style="background-color: ${segment.lineColor}">${segment.lineName}</span>`;
+                html += `<div><span class="line-badge ${hsrBadgeClass}" style="background-color: ${segment.lineColour}">${segment.lineName}</span>`;
 
                 if (index === 0) {
                     html += `From <strong>${segment.from}</strong>`;
@@ -1268,8 +1440,8 @@
                 html += `</div>`;
 
                 // For LSR lines with intermediate stations
-                if (segment.type === "lsr" && segment.stations.length > 2) {
-                    html += `<div class="station-count">Pass through: ${segment.stations.slice(1, -1).join(", ")}</div>`;
+                if (segment.type === "lsr" && segment.stops.length > 2) {
+                    html += `<div class="station-count">Pass through: ${segment.stops.slice(1, -1).join(", ")}</div>`;
                 }
 
                 // For HSR lines
@@ -1278,7 +1450,7 @@
                 }
 
                 // Show detailed segment times for LSR
-                if (segment.type === "lsr" && segment.segments && segment.segments.length > 1) {
+                if (segment.type === "lsr") {
                     html += `<div class="station-count">`;
                     segment.segments.forEach(seg => {
                         html += `${seg.from} to ${seg.to}: ${formatTime(seg.time)}<br>`;
@@ -1289,14 +1461,14 @@
                 html += `<div class="station-count">Total: ${formatTime(segment.time)}`;
 
                 if (segment.type === "lsr") {
-                    html += ` (${segment.stations.length - 1} stops)`;
+                    html += ` (${segment.segments.length} stops)`;
                 }
 
                 html += `</div>`;
                 html += `</div>`;
 
                 if (index < route.length - 1) {
-                    html += `<div class="route-step" style="padding-left: 20px">Transfer at <strong class="transfer-station">${segment.to}</strong> to ${route[index + 1].lineName}</div>`;
+                    html += `<div class="route-step" style="padding-left: 20px">Transfer at <strong class="transfer-station">${segment.to}</strong> to <span class="line-badge ${route[index + 1].type === 'hsr' ? 'hsr-badge' : ''}" style="background-color: ${route[index + 1].lineColour}">${route[index + 1].lineName}</span></div>`;
                 }
             });
 
@@ -1309,4 +1481,5 @@
         init();
     </script>
 </body>
+
 </html>
